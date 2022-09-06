@@ -1,4 +1,6 @@
 import axios from "axios";
+import './css/styles.css';
+
 // axios.post('/user', {
 //     firstName: 'Fred',
 //     lastName: 'Flintstone'
