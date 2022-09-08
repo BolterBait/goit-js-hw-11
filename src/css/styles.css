@@ -47,3 +47,11 @@ body {
     width: 300px;
     height: 380px;
   }
+
+  .button.is-hidden {
+    display: none;
+  }
+  
+  .button > .spinner.is-hidden {
+    display: none;
+  }
