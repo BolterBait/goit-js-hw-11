@@ -17,7 +17,7 @@ body {
     margin-right: auto;
   }
 
-  .load-more {
+  .load-more, .label, .button {
     font: inherit;
     width: 120px;
     display: block;
@@ -46,6 +46,7 @@ body {
   .photo-card {
     width: 300px;
     height: 380px;
+    object-fit: cover;
   }
 
   .button.is-hidden {
@@ -55,3 +56,8 @@ body {
   .button > .spinner.is-hidden {
     display: none;
   }
+
+.button, .search {
+  background-color: blue;
+  color:#fafafa;
+}

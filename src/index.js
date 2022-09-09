@@ -4,11 +4,13 @@ import axios from "axios";
 import { Notify } from "notiflix";
 import './css/styles.css';
 import LoadMoreBtn from './load-more-btn';
+import SearchBtn from "./search-btn";
 
 
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 const refs= {form: document.querySelector('#search-form'),
 submit: document.querySelector('[type="submit"]'),
+// submitBtn: document.querySelector('button.search'),
 renderDiv: document.querySelector('.gallery'),
 } 
 const API_KEY = '29723422-b06f38d2a18d9cab8e97b2e74';
@@ -17,43 +19,56 @@ const loadMoreBtn = new LoadMoreBtn({
   hidden: true,
 });
 
+const searchBtn = new SearchBtn({
+  selector: '[data-action="search"]', 
+  hidden: false,})
+
 
 refs.form.addEventListener('submit', onSubmit);
 loadMoreBtn.refs.button.addEventListener('click', onLoadMoreBtnClick);
 let searchQuery = '';
 let page = 0;
-
-loadMoreBtn.show()
-
-
+let totalHits =0;
+let image =0;
 
 function onSubmit(e) {
     e.preventDefault();
-    
       searchQuery = e.currentTarget.elements.searchQuery.value.trim();
-      loadMoreBtn.show()
-      page = 1
+      
+      page = 1;
+      image = 40;
       if (searchQuery === ""){
         return Notify.info("Please enter some text!")
       }
+      
+      loadMoreBtn.show()
       loadMoreBtn.disable()
-  axios.get(`/?key=${API_KEY}&q=${searchQuery}&image_type=photo&safesearch=true&orientation=horisontal&page=${page}&per_page=40`)
+        axios.get(`/?key=${API_KEY}&q=${searchQuery}&image_type=photo&safesearch=true&orientation=horisontal&page=${page}&per_page=40`)
   .then(response => {clearPhotoMarkup();
     renderPhoto(response.data.hits);
-    loadMoreBtn.enable()
-     const totalHits = response.data.totalHits;    
-     Notify.info(`Hooray! We found ${totalHits} images.`)
+    
+    loadMoreBtn.enable();
+    searchBtn.disable();
+        totalHits = response.data.totalHits;    
+    Notify.info(`Hooray! We found ${totalHits} images.`)
     if (response.data.hits.length === 0) {
       Notify.failure("Sorry, there are no images matching your search query. Please try again.")
-  }
-});
+  }});
 }
 
 function onLoadMoreBtnClick(e) {
+  loadMoreBtn.disable();
   page += 1;
+  image +=40;
    axios.get(`/?key=${API_KEY}q=${searchQuery}&image_type=photo&safesearch=true&orientation=horisontal&page=${page}&per_page=40`)
-  .then(response => {renderPhoto(response.data.hits)});
-  
+  .then(response => {renderPhoto(response.data.hits);
+    loadMoreBtn.enable();
+    if (totalHits <= image) {
+      Notify.info("We're sorry, but you've reached the end of search results.")
+      loadMoreBtn.hide();
+    }
+    });
+   
 }
 
 function renderPhoto(arr) {
@@ -81,7 +96,7 @@ function renderPhoto(arr) {
     }).join('');
 
     refs.renderDiv.insertAdjacentHTML('beforeend', markup);
-   
+    
 };
 
 function clearPhotoMarkup() {
