@@ -30,38 +30,46 @@ let searchQuery = '';
 let page = 0;
 let totalHits =0;
 let image =0;
+let per_page = 40;
 
 function onSubmit(e) {
     e.preventDefault();
       searchQuery = e.currentTarget.elements.searchQuery.value.trim();
-      
+      console.log(searchQuery);
       page = 1;
       image = 40;
+
       if (searchQuery === ""){
         return Notify.info("Please enter some text!")
       }
       
       loadMoreBtn.show()
       loadMoreBtn.disable()
-        axios.get(`/?key=${API_KEY}&q=${searchQuery}&image_type=photo&safesearch=true&orientation=horisontal&page=${page}&per_page=40`)
+        axios.get(`/?key=${API_KEY}&q=${searchQuery}&image_type=photo&safesearch=true&orientation=horisontal&page=${page}&per_page=${per_page}`)
   .then(response => {clearPhotoMarkup();
     renderPhoto(response.data.hits);
-    
     loadMoreBtn.enable();
-    searchBtn.disable();
-        totalHits = response.data.totalHits;    
-    Notify.info(`Hooray! We found ${totalHits} images.`)
     if (response.data.hits.length === 0) {
       Notify.failure("Sorry, there are no images matching your search query. Please try again.")
-  }});
+      return;
+  }
+    totalHits = response.data.totalHits;    
+  if (totalHits >= 1) {
+    Notify.info(`Hooray! We found ${totalHits} images.`)
+  }
+   });
 }
 
 function onLoadMoreBtnClick(e) {
   loadMoreBtn.disable();
+  
+  per_page = totalHits-(per_page * page);
   page += 1;
-  image +=40;
-   axios.get(`/?key=${API_KEY}q=${searchQuery}&image_type=photo&safesearch=true&orientation=horisontal&page=${page}&per_page=40`)
+  image += per_page;
+  // searchQuery = e.currentTarget.elements.searchQuery.value.trim();
+   axios.get(`/?key=${API_KEY}&q=${searchQuery}&image_type=photo&safesearch=true&orientation=horisontal&page=${page}&per_page=${per_page}`)
   .then(response => {renderPhoto(response.data.hits);
+    console.log(searchQuery);
     loadMoreBtn.enable();
     if (totalHits <= image) {
       Notify.info("We're sorry, but you've reached the end of search results.")
@@ -103,7 +111,19 @@ function clearPhotoMarkup() {
   refs.renderDiv.innerHTML = '';
 }
 
-
+// async fetchGallery() {
+//   console.log("До запроса:", this);
+// try {
+//   const response = await axios.get(
+//     ?key=${KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.page}&per_page=${this.perPage}
+//   );
+//   this.incrementPage()
+//   console.log(response);
+//   return response.data.hits;
+// } catch (error) {
+//   console.log(error);
+// }
+// }
   // Notify.info(`Hooray! We found ${totalHits} images.`)
 // const AUTH_TOKEN = 29723422-b06f38d2a18d9cab8e97b2e74;
 
