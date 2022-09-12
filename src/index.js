@@ -57,7 +57,7 @@ async function onSubmit(e) {
       Notify.failure("Sorry, there are no images matching your search query. Please try again.")
       return;
   }
-    totalHits = response.data.totalHits;    
+    const totalHits = response.data.totalHits;    
   if (totalHits >= 1) {
     Notify.info(`Hooray! We found ${totalHits} images.`)
   }image = totalHits - per_page;
