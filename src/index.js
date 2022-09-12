@@ -23,6 +23,10 @@ const searchBtn = new SearchBtn({
   selector: '[data-action="search"]', 
   hidden: false,})
 
+  let lightbox = new SimpleLightbox('.gallery a', {
+    captionDelay: 250,
+    captionsData: 'alt',
+  });
 
 refs.form.addEventListener('submit', onSubmit);
 loadMoreBtn.refs.button.addEventListener('click', onLoadMoreBtnClick);
