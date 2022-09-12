@@ -34,7 +34,7 @@ let searchQuery = '';
 let page = 1;
 let image = 0;
 let per_page = 40;
-let lightbox = {};
+
 
 async function onSubmit(e) {
     e.preventDefault();
